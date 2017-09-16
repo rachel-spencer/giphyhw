@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Giphy Homework</title>
+</head>
+
+<body>
+  <button data-reaction="OMG">OMG</button>
+  <button data-reaction="BRUH">
+    BRUH
+  </button>
+  <button data-reaction="Confused">
+    Confused
+  </button>
+  <button data-reaction="LOL">
+    LOL
+  </button>
+  <button data-reaction="Eyeroll">
+    Eye Roll
+  </button>
+  <div id= "gif-view">
+  </div>
+
+  </br>
+  </br>
+  </br>
+  <form id="search-form">
+      <label for="gif-input">Add a Gif</label>
+      <input type="text" id="gif-input"><br>
+
+      <input id="add-gif" type="submit" value="Add a Gif">
+    </form>
+
+  <div id="gifs-home">
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+
+
+    $("button").on("click", function() {
+      var reaction = $(this).attr("data-reaction");
+      var queryURL = "http://api.giphy.com/v1/gifs/search?q=" +
+        reaction + "&api_key=dc6zaTOxFJmzC&limit=3";
+      $("#gifs-home").empty();
+      $.ajax({
+          url: queryURL,
+          method: "GET"
+        })
+        .done(function(response) {
+          var results = response.data;
+          for (var i = 0; i < results.length; i++) {
+              var gifDiv = $("<div class='item'>");
+              var p = $("<p>").text("Reaction: ");
+              var reactionImage = $("<img>");
+              reactionImage.attr("src", results[i].images.fixed_height.url);
+              gifDiv.append(p);
+              gifDiv.append(reactionImage);
+              $("#gifs-home").prepend(gifDiv);
+            }
+          })
+    });
+
+//Object for creating a gif array and pushing data to it
+    var gifDisplay = {gifArray: [],
+                  gifButton: "",
+                  //creates button
+                  renderGifButtons: function(){
+                  for(var i = 0; i < this.gifArray.length; i++){
+                      this.gifButton = $("<button>");
+                      this.gifButton.addClass("gif")
+                                    .attr("data-name", this.gifArray[i])
+                                    .text(this.gifArray[i]);
+                      //appends button to the page              
+                      $("#gif-view").append(this.gifButton)
+                                    .append(" ");
+                    }
+                   },
+    };
+
+    
+    $("#add-gif").on("click", function(event) {
+      event.preventDefault();
+
+      var gif= $("#gif-input").val().trim();
+      gifDisplay.gifArray.push(gif);
+      console.log(gifDisplay.gifArray);
+      gifDisplay.renderGifButtons();
+
+    }); 
+
+    $(document).on("click",".gif",function(){
+      console.log("testing");
+      if(name.length){
+        api.findImages(name, 3, function(img){
+          $('<div>')
+            .addClass('item')
+            .append(
+              $('<p>').text('test:'))
+            .append(
+              $('<img>').attr('src', img))
+            .appendTo('#gifs-home')
+        })
+      }
+    });
+    
+  $(".gif").on("click", function() {
+        var state = $(this).attr("data-state");
+        if (state === "still") {
+          $(this).attr("src", $(this).attr("data-animate"));
+          $(this).attr("data-state", "animate");
+        } else {
+          $(this).attr("src", $(this).attr("data-still"));
+          $(this).attr("data-state", "still");
+        }
+      });
+
+
+  </script>
+</body>
+
+</html>
